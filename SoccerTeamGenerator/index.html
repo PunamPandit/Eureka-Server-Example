@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>It will generate the Soccer Table</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background-color: linen;
+        }
+
+        td {
+            border: 2px black solid;
+            padding: 10px;
+        }
+
+        tr:first-child {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+
+</head>
+<body>
+
+<label for="name">Name: </label><input type="text" name="name" id="name"/>
+<label for="position">Position: </label><select id="position">
+    <option value="Goal-Keeper">Goal-Keeper</option>
+    <option value="Defender">Defender</option>
+    <option value="Mid-Fielder">Mid-Fielder</option>
+    <option value="Striker">Striker</option>
+</select>
+<label for="rating">Rating: </label><input type="range" name="rating" id="rating" min="0" max="10"
+                                           onchange="updateTextInput(this.value);"/>
+<label id="rangeInput"></label>
+<button onclick="myFunction()">Add Player</button>
+
+<div id="container"></div>
+<div id="gk"></div>
+<div id="cb"></div>
+<div id="md"></div>
+<div id="st"></div>
+<button onclick="generate()">Generate Team</button>
+
+<script>
+    const playersMap = new Map();
+    const cb = new Map();
+    const st = new Map();
+    const md = new Map();
+    const gk = new Map();
+
+    function myFunction() {
+        const name = document.getElementById('name').value;
+        const position = document.getElementById('position').value;
+        const rating = document.getElementById('rating').value;
+
+        playersMap.set(name, {position, rating});
+
+        document.getElementById("container").innerHTML = "";
+
+        let table = document.createElement("table"),
+            row = table.insertRow();
+        row.insertCell().innerHTML = "Name";
+        row.insertCell().innerHTML = "Position";
+        row.insertCell().innerHTML = "Rating";
+        row = table.insertRow();
+
+        for (let [key, value] of playersMap) {
+            row.insertCell().innerHTML = key;
+            row.insertCell().innerHTML = value.position;
+            row.insertCell().innerHTML = value.rating;
+
+            // add listener later for edit
+            // cell3.addEventListener("click", function () {
+            //     alert("EDIT!");
+            // });
+            row = table.insertRow();
+        }
+        document.getElementById("container").appendChild(table);
+    }
+
+    function generate() {
+        groupByPosition();
+
+        displayByGroup(gk);
+        displayByGroup(cb);
+        displayByGroup(md);
+        displayByGroup(st);
+
+        randomize(gk);
+    }
+
+    function groupByPosition() {
+        for (let [key, value] of playersMap) {
+            switch (value.position) {
+                case "Goal-Keeper":
+                    gk.set(key, value);
+                    break;
+                case "Defender":
+                    cb.set(key, value);
+                    break;
+                case "Mid-Fielder":
+                    md.set(key, value);
+                    break;
+                case "Striker":
+                    st.set(key, value);
+                    break;
+                default:
+            }
+        }
+    }
+
+    function displayByGroup(position) {
+        let str = '<ul>', lbl;
+        for (let [key, value] of position) {
+            str += '<li>' + key + "," + value.position + '</li></br>';
+            lbl = value.position;
+        }
+        str += '</ul>';
+        document.getElementById(lbl === "Defender" ? "cb" : lbl === "Striker" ? "st" : lbl === "Mid-Fielder" ? "md" : lbl === "Goal-Keeper" ? "gk" : "").innerHTML = str;
+    }
+
+    function randomize(position) {
+        let list1, list2;
+    }
+
+    function updateTextInput(val) {
+        document.getElementById('rangeInput').innerText = val;
+    }
+</script>
+
+</body>
+</html>
